@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('./partials/head') %>
+</head>
+<body>
+  <%- include('./partials/navbar1') %>
+
+    <div class="jumbotron jumbotron-fluid" style="margin-top: 100px; background-color: teal;" >
+      <div class="container">
+        <h1 style="text-align: center; color: white; font-weight: 800;">Our Team!!</h1>
+      </div>
+    </div>
+
+    <div class="jumbotron">
+      <div class="row">
+        <% if (members.length > 0) { %>
+          <% members.forEach(pp => { %>
+        <div class="col-lg-4 col-md-6 col-sm-12">
+          <div class="card" style="width: 18rem;">
+            <img class="card-img-top" src="cimg1.jpg" alt="Card image cap">
+            <div class="card-body">
+              <h5 class="card-title" style="color: crimson; text-align: center; text-transform: capitalize;" ><%=pp.memname%></h5>
+              <i class="fa fa-envelope" style="font-size:36px"></i>
+              <p><%=pp.git%></p>
+              <a href="<%=pp.git%>" style="text-decoration: none; color: black; justify-content: center;text-align: left; "><i class="fa fa-github" style="font-size:36px"></i></a>
+              </div>              
+            </div>
+          </div>
+        </div>
+        <% }) %>
+            <% } else { %>
+              <p style="text-align: center; font-weight: 800; "><span style="text-align:center">There are no members to display at this Moment :)</span></p>
+          <% } %>
+      </div>
+    </div>
+
+
+
+
+
+
+
+    <%- include('./partials/footer') %>
+
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>
