@@ -6,25 +6,24 @@ const flash  =require('connect-flash');
 const session = require('express-session');
 const passport = require('passport'); 
 const fs = require('fs');
-var app = express();
+require('./passport')(passport);
 
 //File Requires
-require('./passport')(passport);
+
 const { ensureAuthenticated } = require('./auth');
 const blogRoutes = require('./routes/blogsroutes');
 const projectRoutes = require('./routes/projectsroutes');
 const memberRoutes = require('./routes/memberroutes');
-//const adminRoutes = require('./routes/adminroutes')
-//const MemberRoutes = require('./routes/membersroutes');
 
 //Database Instances
-const pjdb = require('./models/project.model');
-const bgdb = require('./models/blog.model');
-const mbdb = require('./models/member.model');
-const apdb = require('./models/user.model');
+const project_db = require('./models/project.model');
+const blog_db = require('./models/blog.model');
+const user_db = require('./models/user.model');
+const member_db = require('./models/member.model');
 
 
-//Database Connections
+//Database Connections and Express
+var app = express();
 const port = process.env.PORT || 3000 ;
 const dburl = "mongodb+srv://gowtham:test1234@main.l0g6f.mongodb.net/dataPirates_db?retryWrites=true&w=majority";
 mongoose.connect(dburl,{useNewUrlParser:true,useUnifiedTopology:true})
@@ -51,7 +50,6 @@ app.use(flash());
 //Multer
 var path = require('path');
 var multer = require('multer');
-const auth = require('./auth');
 
 var storage = multer.diskStorage({
 	destination: (req, file, cb) => {
@@ -70,6 +68,18 @@ var upload = multer({ storage: storage });
 app.get('/',(req,res)=>{
     res.render('aaindex');
     console.log('Rendered Index');
+})
+
+app.get('/projects',(req,res)=>{
+  project_db.find().sort({createdat:-1})
+  .then(result=>{
+    res.render('g.projects',{projects:result});
+  })
+  .catch(err=>{
+    console.log(err);
+  })
+  
+  console.log('Rendered Index');
 })
 
 //Project Route

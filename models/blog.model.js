@@ -27,6 +27,11 @@ const blogschema = new schema({
         type: String,
         required:true,
     },
+    status:
+    {
+        type:Boolean,
+        required:true,
+    }
 });
 const blog = mongoose.model('blog_db',blogschema);
 module.exports = blog;
