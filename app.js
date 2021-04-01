@@ -14,7 +14,7 @@ const { ensureAuthenticated } = require('./auth');
 const blogRoutes = require('./routes/blogsroutes');
 const projectRoutes = require('./routes/projectsroutes');
 const memberRoutes = require('./routes/memberroutes');
-const adminRoutes = require('./routes/adminroutes')
+//const adminRoutes = require('./routes/adminroutes')
 //const MemberRoutes = require('./routes/membersroutes');
 
 //Database Instances
@@ -65,9 +65,10 @@ var storage = multer.diskStorage({
 var upload = multer({ storage: storage });
 
 
+
 //Main Route
 app.get('/',(req,res)=>{
-    res.render('index');
+    res.render('aaindex');
     console.log('Rendered Index');
 })
 
@@ -80,17 +81,23 @@ app.use('/members',memberRoutes);
 //Blog Route
 app.use('/blogs',blogRoutes);
 
+//404
+app.use((req, res) => {
+  res.status(404).render('404');
+});
+
+
+
+
 //Admin
-app.use('/admin',adminRoutes);
+//app.use('/admin',adminRoutes);
 
 //Member
 //app.use('/member',MemberRoutes);
 
 
 //404 Page
-app.use((req, res) => {
-  res.status(404).render('404');
-});
+
 
 /*
 //admin

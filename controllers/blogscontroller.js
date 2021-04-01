@@ -5,7 +5,7 @@ const blog_db = require('../models/blog.model');
 const blog_get = (req,res) => {
   blog_db.find().sort({createdAt:-1})
   .then(result =>{
-    res.render('blogs',{blogs :result});
+    res.render('aaindex',{blogs :result});
   })
   .catch(err => {
     console.log(err);
@@ -16,7 +16,7 @@ const blog_details_get = (req,res) =>{
     const id = req.params.id;
     blog_db.findById(id)
     .then(result =>{
-     res.render('blogdetails',{blog : result});
+     res.render('g.blogdetails',{blog : result});
     })
     .catch(err => {
       console.log(err);
