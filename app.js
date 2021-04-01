@@ -1,4 +1,135 @@
+//Importings 
 const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser=require('body-parser');
+const { v4: uuidv4 } = require('uuid');
+
+//Express and port
+var app = express();
+const port = process.env.PORT || 3000 ;
+
+//Database
+const dburl = "mongodb+srv://gowtham:test1234@main.l0g6f.mongodb.net/labsite_db?retryWrites=true&w=majority";
+mongoose.connect(dburl,{useNewUrlParser:true,useUnifiedTopology:true , useCreateIndex:true})
+.then(res=> app.listen(port),console.log("Database  Connected !!!"))
+.catch(err=> console.log(err));
+
+//Database Models
+const project_db = require('./models/project.model');
+const blog_db = require('./models/blog.model');
+const user_db = require('./models/user.model');
+
+//View Engine
+app.set('view engine','ejs');
+
+//Multer
+var path = require('path');
+var multer = require('multer');
+var pdf_file_name;
+var storage = multer.diskStorage({
+	destination: (req, file, cb) => {
+		cb(null, 'uploads')
+	},
+	filename: (req, file, cb) => {
+    pdf_file_name = uuidv4() + '.pdf' ;
+		cb(null, pdf_file_name)
+
+	}
+});
+var upload = multer({ storage: storage });
+
+//Static , Password , MiddleWare
+app.use(express.static('public'));
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(express.json());
+
+//Routes
+const projectroutes = require('./routes/projectroutes');
+const blogroutes = require('./routes/blogroutes');
+const memberroutes = require('./routes/memberroutes.js');
+
+
+//Member Dashboard
+app.get('/memberdashboard',(req,res) =>{
+  res.render('membersdashboard')
+})
+
+app.get('/membersaddproject',(req,res) =>{
+  res.render('membersnewproject')
+})
+
+app.get('/membersaddblog',(req,res) =>{
+  res.render('membersnewblog')
+})
+
+app.get('/membersupdate',(req,res) =>{
+  res.render('membersupdate')
+})
+
+//Admin Dashboard
+app.get('/admindashboard',(req,res) =>{
+  res.render('admindashboard')
+})
+
+app.get('/adminaddproject',(req,res) =>{
+  res.render('adminaddproject')
+})
+
+app.get('/adminaddblog',(req,res) =>{
+  res.render('adminaddblog')
+})
+
+
+app.get('/adminaddmember',(req,res) =>{
+  res.render('adminaddmember')
+})
+
+
+
+app.get('/admineditproject',(req,res) =>{
+  res.render('admineditproject')
+})
+
+app.get('/admineditblog',(req,res) =>{
+  res.render('admineditblog')
+})
+
+app.get('/admineditmember',(req,res) =>{
+  res.render('admineditmember')
+})
+
+
+
+app.get('/adminreviewproject',(req,res) =>{
+  res.render('adminreviewproject')
+})
+
+app.get('/adminreviewblog',(req,res) =>{
+  res.render('adminreviewblog')
+})
+
+
+//Index page
+
+app.get('/',(req,res)=>{
+  res.render('aaindex')
+})
+
+//project routes
+app.use('/projects',projectroutes);
+
+//blog routes
+app.use('/blogs',blogroutes);
+
+//member routes
+app.use('/members',memberroutes);
+
+//404 rout
+app.use((req,res) =>{
+  res.status(404).render('404');
+})
+
+/*const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser=require('body-parser');
 const bcrypt = require('bcrypt');
@@ -13,13 +144,12 @@ require('./passport')(passport);
 const { ensureAuthenticated } = require('./auth');
 const blogRoutes = require('./routes/blogsroutes');
 const projectRoutes = require('./routes/projectsroutes');
-const memberRoutes = require('./routes/memberroutes');
+const userRoutes = require('./routes/memberroutes');
 
 //Database Instances
 const project_db = require('./models/project.model');
 const blog_db = require('./models/blog.model');
 const user_db = require('./models/user.model');
-const member_db = require('./models/member.model');
 
 
 //Database Connections and Express
@@ -31,7 +161,7 @@ mongoose.connect(dburl,{useNewUrlParser:true,useUnifiedTopology:true})
 .catch(err=> console.log(err));
 
 //View Engine
-app.set('view engine','ejs');
+
 
 //Static and MiddleWare
 app.use(express.static('public'));
@@ -70,21 +200,9 @@ app.get('/',(req,res)=>{
     console.log('Rendered Index');
 })
 
-app.get('/projects',(req,res)=>{
-  project_db.find().sort({createdat:-1})
-  .then(result=>{
-    res.render('g.projects',{projects:result});
-  })
-  .catch(err=>{
-    console.log(err);
-  })
-  
-  console.log('Rendered Index');
-})
-
 //Project Route
 app.use('/projects',projectRoutes);
-
+/*
 //Memeber Route
 app.use('/members',memberRoutes);
 

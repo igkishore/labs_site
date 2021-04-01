@@ -1,10 +1,7 @@
 const express = require('express');
-const { ensureAuthenticated } = require('../auth');
-const memberController = require('../controllers/membercontroller.js');
-
+const membercontroller = require('../controllers/membercontroller');
 const router = express.Router();
 
-router.get('/', memberController.member_get);
-
+router.get('/', membercontroller.members_get);
 
 module.exports = router;

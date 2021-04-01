@@ -6,13 +6,15 @@
 <body>
   <%- include('./partials/navbar1') %>
 
-    <div class="jumbotron jumbotron-fluid" style="margin-top: 100px; background-color: teal;" >
-      <div class="container">
-        <h1 style="text-align: center; color: white; font-weight: 800;">Explore our Projects!!</h1>
+  <div class="jumbotron jumbotron-fluid" style="background-image: url(background2.svg); background-repeat: no-repeat; background-position: center;" >
+    <div class="container">
+      <div class="row" style="margin-top: 90px; margin-bottom: 200px;">
+        <div class="col-lg-12">
+          <h1 style="text-align: center; margin-top: 0px;  justify-content: center; font-weight: 800;">Welcome to our Projects!!</h1>
+        </div> 
       </div>
     </div>
-
-
+  </div>
 
     <div class="jumbotron" >
       <% if (projects.length > 0) { %>
@@ -52,6 +54,11 @@
           <% } %>
 
   </div>
+
+
+  
+
+   
 
 
 
