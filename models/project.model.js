@@ -40,11 +40,21 @@ const projectschema = new Schema({
     type:String,
     
   }, 
-  image:
+  image_id:
   {
-    data: Buffer,
-    contentType: String,
+      type:String,
+      required:true
   },
+  image_link:
+  {
+      type:String,
+      required:true,
+  },
+  status:
+  {
+      type:Boolean,
+      required:true,
+  }
 });
 const project = mongoose.model('projectdb',projectschema);
 module.exports = project;

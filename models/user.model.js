@@ -6,10 +6,30 @@ const userschema = new Schema({
     required:true,
     unique:true,
   },
-  role:
+  mail_id:
   {
     type: String,
     required:true,
+  },
+  gitlink:
+  {
+      type: String,
+      required:true,
+  },
+  image_id:
+  {
+      type:String,
+      required:true
+  },
+  image_link:
+  {
+      type:String,
+      required:true,
+  },
+  status:
+  {
+      type:Boolean,
+      required:true,
   },
   password:
   {
