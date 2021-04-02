@@ -33,5 +33,5 @@ const blogschema = new schema({
         required:true,
     }
 });
-const blog = mongoose.model('blog_db',blogschema);
+const blog = mongoose.model('blog',blogschema);
 module.exports = blog;

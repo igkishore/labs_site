@@ -6,31 +6,24 @@ const userschema = new Schema({
     required:true,
     unique:true,
   },
-  mail_id:
+  /*mail_id:
   {
     type: String,
-    required:true,
   },
   gitlink:
   {
       type: String,
-      required:true,
   },
-  image_id:
+  user_image:
+  {
+    data: Buffer,
+    contentType: String,
+  },
+ /* role:
   {
       type:String,
-      required:true
-  },
-  image_link:
-  {
-      type:String,
-      required:true,
-  },
-  status:
-  {
-      type:Boolean,
-      required:true,
-  },
+      //required:true,
+  },*/
   password:
   {
     type:String,

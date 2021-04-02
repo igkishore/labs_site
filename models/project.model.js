@@ -38,17 +38,12 @@ const projectschema = new Schema({
   conclusion:
   {
     type:String,
-    
+    required:true,
   }, 
-  image_id:
+  project_image:
   {
-      type:String,
-      required:true
-  },
-  image_link:
-  {
-      type:String,
-      required:true,
+    data: Buffer,
+    contentType: String,
   },
   status:
   {
@@ -56,5 +51,5 @@ const projectschema = new Schema({
       required:true,
   }
 });
-const project = mongoose.model('projectdb',projectschema);
+const project = mongoose.model('project',projectschema);
 module.exports = project;

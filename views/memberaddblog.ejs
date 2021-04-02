@@ -3,6 +3,7 @@
   <%- include('./partials/head') %>
 <body>
   <%- include('./partials/navbar2') %>
+
   <div class="jumbotron jumbotron-fluid" style="background-image: url(background2.svg); background-repeat: no-repeat; background-position: center;" >
     <div class="container">
       <div class="row" style="margin-top: 90px; margin-bottom: 200px;">
@@ -17,30 +18,34 @@
 
     <div class="jumbotron" style="background-color: white;">
         <div class="container">
-            <form action="/nm" method="POST" >
+            <form action="/memberaddblog" method="POST" >
             <div class="form-group">
-              <label for="title">Name </label>
-              <input type="text" class="form-control" name="memname" id="title"  placeholder="Enter Project Name" required>
+              <label for="title"> Name</label>
+              <input type="text" class="form-control" name="title" maxlength="15" placeholder="Enter Blog Name | Max length 15" required>
             </div>
             <div class="form-group">
-              <label for="title">git link</label>
-              <input type="text" class="form-control" name="gitlink" id="point1"  placeholder="Enter Project Point One" required>
+              <label for="point1">Point I</label>
+              <input type="text" class="form-control" name="point1" maxlength="35" placeholder="Enter point I | Max length 35" required>
             </div>
             <div class="form-group">
-              <label for="title">mail</label>
-              <input type="text" class="form-control" name="mailid" id="point2"  placeholder="Enter Project Point two" required>
+              <label for="point2">point 2</label>
+              <input type="text" class="form-control" name="point2" maxlength="35" placeholder="Enter point II | Max length 35" required>
+            </div>
+            <div class="form-group">
+              <label for="Introduction">Introduction</label>
+              <input type="text" class="form-control" name="introduction"  placeholder="Enter introduction" required>
+            </div>
+            <div class="form-group">
+              <label for="matter">Matter</label>
+              <input type="text" class="form-control" name="matter"  placeholder="Enter matter" required>
             </div>
             <div class="form-group" style="text-align: center;">
                 <button type="submit" class="btn btn-outline-dark">Submit</button>
             </div>
+            
           </form>
         </div>
     </div>
-
-
-
-
-
 
     <%- include('./partials/footer') %>
 
