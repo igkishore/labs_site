@@ -11,6 +11,16 @@ const project_get = (req,res) =>{
     })
 }
 
+const project_get_details = (req,res) =>{
+  const project_id = req.params.id;
+  project_db.findById(project_id)
+  .then(result => {
+    res.render('gprojectdetails',{project:result});
+  })
+  .catch(err=>console.log(err));
+}
+
 module.exports = {
     project_get,
+    project_get_details
 }

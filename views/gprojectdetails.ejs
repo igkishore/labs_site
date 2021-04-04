@@ -4,26 +4,30 @@
 <body>
   <%- include('./partials/navbar1') %>
 
-    <div class="jumbotron jumbotron-fluid" style="margin-top: 100px; background-color: teal;" >
-      <div class="container">
-            <h1 style="text-align: center;  justify-content: center; ">Welcome to our blogs!!</h1>
+  <div class="jumbotron jumbotron-fluid" style="background-image: url(../public/background2.svg); background-repeat: no-repeat; background-position: center;" >
+    <div class="container">
+      <div class="row" style="margin-top: 90px; margin-bottom: 200px;">
+        <div class="col-lg-12">
+          <h1 style="text-align: center; margin-top: 0px;  justify-content: center; font-weight: 800;">Welcome to our Projects!!</h1>
+        </div> 
       </div>
     </div>
+  </div>
 
 
         <div class=" jumbotron" style="padding: 40px; background-color: rgb(235, 228, 228) ">
                 <div class=" jumbotron temp" style="background-color: rgb(255, 255, 255);">
                   <div class="container-fluid">
-                      <h2 style="text-align: center; color:teal; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;"><%= pj.title %></h1>
+                      <h2 style="text-align: center; color:teal; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;"><%= project.title %></h1>
                       <br>
                       <h2 style="color: crimson;">I.Introduction</h2>
-                      <p><%= pj.introduction %></p>
+                      <p><%= project.introduction %></p>
                       <br>
                       <h2 style="color: crimson;" >II.Explanation</h2>
-                      <p><%= pj.working %></p>
+                      <p><%= project.working %></p>
                       <br>
                       <h2 style="color: crimson;" >III.Conclusion</h2>
-                      <p><%= pj.conclusion %></p>
+                      <p><%= project.conclusion %></p>
                   </div>
               </div>
         </div>
@@ -32,44 +36,7 @@
 
        
 
-        <footer class="page-footer font-small unique-color-dark " style="background: black;">
-            <div class="container text-center text-md-left mt-5">
-              <br>
-              <div class="row mt-3">
-                <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
-                  <h6 class="text-uppercase font-weight-bold" style="color: #fff;text-align: center;"> Admins Links   !!!</h6>
-              <hr class="deep-purple accent-2 mb-4 mt-0 d-inline-block mx-auto" style="width: 60px;">
-              <a href="/adminlogin"><button type="button" style="color: white;" class="btn btn-outline-dark">Admin login</button></a>
-              <br>
-            </div>
-                <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
-                  <h6 class="text-uppercase font-weight-bold" style="color: #fff; text-align: center;">Contact</h6>
-                  <hr class="deep-purple accent-2 mb-4 mt-0 d-inline-block mx-auto" style="width: 60px;">
-                  <p>
-                    <p style="color: #fff; text-align: center;">gowthamkishoreindukuri@gmail.com</p>
-                  </p>
-                  <p>
-                    <p style="color: #fff; text-align: center;">+91 6302968122</p>
-                  </p>
-        
-                </div>
-        
-                <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
-                  <h6 class="text-uppercase font-weight-bold" style="color: #fff;text-align: center;">Address</h6>
-                  <hr class="deep-purple accent-2 mb-4 mt-0 d-inline-block mx-auto" style="width: 60px;">
-                  
-                  <p style="color: #fff; text-align: center;">
-                   
-                    Amrita Vishwa Vidyapeetham , Amritapuri Campus Area ,<br>
-                   Shivam Block ,<br> Kerala , INDIA.</p>
-        
-                </div>
-              </div>
-            </div>
-            <div class="footer-copyright text-center py-3" style="color: #fff;">© 2020 Copyright:
-              <a href="http://igkishore.github.io/" style="color: #fff;"> gowtham_kishore_indukuri</a>
-            </div>
-          </footer>
+        <%- include('./partials/footer') %>
   
   
   

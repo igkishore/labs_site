@@ -5,11 +5,13 @@
 
   <%- include('./partials/navbar1') %>
 
-        <h1 style="font-weight: 800; text-align: center;"><span style="color:#e30f41 ; margin-left: 10%;">Admin Login</span></h1>
+       
         <div class="jumbotron jumbotron-fluid" style="background: white;"></div>
         <div class="container">
-
-            <h1 style="font-weight: 800; text-align: center;"><span style="color:teal; margin-left: 10%;">Admin Login</span></h1>
+          <%if(error!=''){%>
+          <h3 style="background-color: rgba(255, 0, 0, 0.61); font-size:large; color: white; text-align: center; padding: 20px;" > &empty; <%=error%></h3>
+          <%}%>
+            <h1 style="font-weight: 800; text-align: center;"><span style="color:rgb(255, 0, 85); margin-left: 10%;">Admin Login</span></h1>
                   <form action="login" method="POST">
                     <div class="form-group">
                       <label for="exampleFormControlInput1">Name</label>
@@ -23,7 +25,6 @@
                         <button type="submit" class="btn btn-outline-dark" style="transition: 0.4s;">Submit</button>
                       </div>
 
-                      <p>Not have an Account <a href="register">Register</a> Here</p>
                      
                   </form>
 

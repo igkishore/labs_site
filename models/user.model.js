@@ -6,7 +6,7 @@ const userschema = new Schema({
     required:true,
     unique:true,
   },
-  /*mail_id:
+  mail_id:
   {
     type: String,
   },
@@ -19,11 +19,11 @@ const userschema = new Schema({
     data: Buffer,
     contentType: String,
   },
- /* role:
+  role:
   {
       type:String,
-      //required:true,
-  },*/
+      required:true,
+  },
   password:
   {
     type:String,

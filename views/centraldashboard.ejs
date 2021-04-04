@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <%- include("./partials/head.ejs") %>
+    <body>
+      <%- include("./partials/navbar2.ejs") %>
+
+      <div class="jumbotron jumbotron-fluid" style="background-image: url(background2.svg); background-repeat: no-repeat; background-position: center;" >
+        <div class="container">
+          <div class="row" style="margin-top: 120px; margin-bottom: 50px;">
+            <div class="col-lg-12">
+              <h1 style="text-align: center; margin-top: 0px;  justify-content: center; font-weight: 800;">Welcome Back Members!!</h1>
+              <h3 style="color: rgb(68, 47, 0); text-align: center; margin-top: 0px;  justify-content: center;"   >Hope a nice office day a head :)</h3>
+            </div> 
+          </div>
+        </div>
+      </div>
+        <div class="container">
+          <%if(error!=''){%>
+            <h3 style="background-color: rgba(255, 0, 0, 0.61); font-size:large; color: white; text-align: center; padding: 20px;" > &empty; <%=error%></h3>
+            <%}%>
+          <div class="row">
+            <div class="col-lg-6 col-md-12 col-sm-12" >
+              <img  src="/title.svg" alt="Pictureof GK" style="width: 100%;">
+            </div>
+            <br>
+            <br>
+            <div class="col-lg-3 col-md-12 col-sm-12" >
+              <a href="/admindashboard"><button type="submit"  class="btn btn-outline-dark" style="transition: 0.4s;"> Admin Dashboard </button></a>
+            </div>
+            <br>
+            <br>
+            <div class="col-lg-3 col-md-12 col-sm-12">
+              <a href="/memberdashboard"><button type="submit"  class="btn btn-outline-dark" style="transition: 0.4s;">Member Dashboard</button></a>
+            </div>
+          </div>
+        </div>
+
+        <%- include("./partials/footer.ejs") %>
+        
+              
+                    
+     
+
+
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    </body>
+</html>

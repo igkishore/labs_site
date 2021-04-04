@@ -19,12 +19,13 @@
     <div class="jumbotron" >
       <% if (projects.length > 0) { %>
         <% projects.forEach(pp => { %>
+          <% if(pp.status==1) {%>
           <div class="jumbotron" style="background-color: #fff;">
             <div class="">
               <div class="row">
                 <div class="col-lg-6 col-md-12 col-sm-12">
-                  <img src="data:image/<%=pp.image.contentType%>;base64,
-                  <%=pp.image.data.toString('base64')%>" style="width: 90%; height: auto;" >
+                  <img src="data:image/<%=pp.project_image.contentType%>;base64,
+                  <%=pp.project_image.data.toString('base64')%>" style="width: 90%; height: auto;" >
                 </div>
                 <div class="col-lg-6 col-md-12 col-sm-12">
                   <h2 style="text-align: center; text-transform: capitalize; color: crimson; font-weight: 800;">
@@ -48,6 +49,7 @@
               </div>
             </div>
           </div>
+          <%}%>
           <% }) %>
           <% } else { %>
             <p style="text-align: center; font-weight: 800; "><span style="text-align:center">There are no projects to display at this Moment :)</span></p>

@@ -2,9 +2,17 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser=require('body-parser');
+const bcrypt = require('bcrypt');
+const session = require('express-session');
+const passport = require('passport'); 
+const { ensureAuthenticated } = require('./auth');
+require('./passport')(passport);
+const flash = require('connect-flash');
 const { v4: uuidv4 } = require('uuid');
 require('dotenv').config();
 const fs = require('fs')
+
+
 //Express and port
 var app = express();
 const port = process.env.PORT || 3000 ;
@@ -43,8 +51,14 @@ var upload = multer({ storage: storage });
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.json());
-
-//static , password  and middleware
+app.use(session({
+  secret: 'gowtham',
+  resave: true,
+  saveUninitialized: true,
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash());
 
 //Routes
 const projectroutes = require('./routes/projectroutes');
@@ -52,196 +66,354 @@ const blogroutes = require('./routes/blogroutes');
 const memberroutes = require('./routes/memberroutes.js');
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//Central dashboard
+app.get('/centraldashboard',(req,res)=>{
+  res.render('centraldashboard',{error:''});
+})
+
+
+
+
+
+
+
+
 //Member Dashboard
-app.get('/memberdashboard',(req,res) =>{
-  res.render('membersdashboard')
-})
-
-app.get('/membersaddproject',(req,res) =>{
-  res.render('memberaddproject')
-})
-
-app.post('/memberaddproject',upload.single('image'), (req,res) =>{
- console.log(req.body)
-  var obj = {
-    title: req.body.title,
-    point1: req.body.point1,
-    point2: req.body.point2,
-    link1: req.body.link1,
-    link2:req.body.link2,
-    introduction:req.body.introduction,
-    working:req.body.working,
-    conclusion:req.body.conclusion,
-    status:0,
-		image: {
-			data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)),
-			contentType: 'image/png'
-		}
-	}
-	project_db.create(obj, (err, item) => {
-    const file_path = 'uploads/'+image_file_name;
-		if (err) {
-			console.log(err);
-		}
-		else {
-
-      try{
-        fs.unlinkSync(file_path);
-      }
-      catch(err){
-        console.log(err) ;
-      }
-
-			res.redirect('/membersaddproject');
-		}
-	});
-})
-
-
-app.get('/membersaddblog',(req,res) =>{
-  res.render('memberaddblog')
-})
-
-app.post('/memberaddblog',(req,res)=>{
-  var new_blog = {
-    title:req.body.title,
-    point1: req.body.point1,
-    point2: req.body.point2,
-    introduction:req.body.introduction,
-    matter:req.body.matter,
-    status:0
-  }
-  blog_db.create(new_blog, (err, item) => {
-		if (err) {
-			console.log(err);
-		}
-		else {
-			res.redirect('/membersaddblog');
-		}
-	});
-})
-
-app.get('/membersupdate',(req,res) =>{
+app.get('/memberdashboard',ensureAuthenticated,(req,res) =>{
   const user_id = req.session.passport.user;
-
-  res.render('memberupdate')
+  user_db.findById(user_id)
+  .then(result => {
+    if(result.role =='M')
+    {
+      res.render('membersdashboard',{user: result})
+    }
+    else
+    {
+      res.render('centraldashboard',{error:'unautherized'})
+    }
+  })
+  .catch(err=>console.log(err));
 })
+
+app.get('/membersaddproject',ensureAuthenticated,(req,res) =>{
+  const user_id = req.session.passport.user;
+  user_db.findById(user_id)
+  .then(result => {
+    if(result.role =='M')
+    {
+      res.render('memberaddproject')
+    }
+    else
+    {
+      res.render('centraldashboard',{error:'unautherized'})
+    }
+  })
+  .catch(err=>console.log(err));
+ 
+})
+
+app.post('/memberaddproject',ensureAuthenticated, upload.single('image'), (req,res) =>{
+  const user_id = req.session.passport.user;
+  user_db.findById(user_id)
+  .then(result => {
+    if(result.role =='M')
+    {
+      var obj = {
+        title: req.body.title,
+        point1: req.body.point1,
+        point2: req.body.point2,
+        link1: req.body.link1,
+        link2:req.body.link2,
+        introduction:req.body.introduction,
+        working:req.body.working,
+        conclusion:req.body.conclusion,
+        status:0,
+        image: {
+          data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)),
+          contentType: 'image/png'
+        }
+      }
+      project_db.create(obj, (err, item) => {
+        const file_path = 'uploads/'+image_file_name;
+        if (err) {
+          console.log(err);
+        }
+        else {
+    
+          try{
+            fs.unlinkSync(file_path);
+          }
+          catch(err){
+            console.log(err) ;
+          }
+    
+          res.redirect('/membersadddashboard');
+        }
+      });
+    }
+    else
+    {
+      res.render('centraldashboard',{error:'unautherized'})
+    }
+  })
+  .catch(err=>console.log(err));
+ 
+})
+
+
+app.get('/membersaddblog',ensureAuthenticated,(req,res) =>{
+  const user_id = req.session.passport.user;
+  user_db.findById(user_id)
+  .then(result => {
+    if(result.role =='M')
+    {
+      res.render('memberaddblog')
+    }
+    else
+    {
+      res.render('centraldashboard',{error:'unautherized'})
+    }
+  })
+  .catch(err=>console.log(err));
+  
+})
+
+app.post('/memberaddblog',ensureAuthenticated,(req,res)=>{
+  const user_id = req.session.passport.user;
+  user_db.findById(user_id)
+  .then(result => {
+    if(result.role =='M')
+    {
+      var new_blog = {
+        title:req.body.title,
+        point1: req.body.point1,
+        point2: req.body.point2,
+        introduction:req.body.introduction,
+        matter:req.body.matter,
+        status:0
+      }
+      blog_db.create(new_blog, (err, item) => {
+        if (err) {
+          console.log(err);
+        }
+        else {
+          res.redirect('/membersaddblog');
+        }
+      });
+    }
+    else
+    {
+      res.render('centraldashboard',{error:'unautherized'})
+    }
+  })
+  .catch(err=>console.log(err));
+})
+
+app.get('/membersupdate',ensureAuthenticated,(req,res) =>{
+  const user_id1 = req.session.passport.user;
+  user_db.findById(user_id1)
+  .then(result => {
+    if(result.role =='M')
+    {
+      const user_id = req.session;
+      console.log(user_id)
+      user_db.findById(user_id)
+      .then(result => {
+        console.log(user_id,result)
+        res.render('memberupdate',{member:result});
+      })
+      .catch(err=>console.log(err));
+    }
+    else
+    {
+      res.render('centraldashboard',{error:'unautherized'})
+    }
+  })
+  .catch(err=>console.log(err));
+
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //Admin Dashboard
 app.get('/admindashboard',(req,res) =>{
-  res.render('admindashboard')
+  const user_id = req.session.passport.user;
+  user_db.findById(user_id)
+  .then(result => {
+    if(result.role =='A')
+    {
+      res.render('admindashboard')
+    }
+    else
+    {
+      res.render('centraldashboard',{error:'un-authorized'})
+    }
+  })
+  .catch(err=>console.log(err));
+  
 })
 
 app.get('/adminaddproject',(req,res) =>{
-  res.render('adminaddproject')
+  const user_id = req.session.passport.user;
+  user_db.findById(user_id)
+  .then(result => {
+    if(result.role =='A')
+    {
+      res.render('adminaddproject')
+    }
+    else
+    {
+      res.render('centraldashboard',{error:'unautherized'})
+    }
+  })
+  .catch(err=>console.log(err));
+  
 })
 
 app.post('/adminaddproject',upload.single('image'), (req,res) =>{
-  console.log(req.body)
-   var obj = {
-     title: req.body.title,
-     point1: req.body.point1,
-     point2: req.body.point2,
-     link1: req.body.link1,
-     link2:req.body.link2,
-     introduction:req.body.introduction,
-     working:req.body.working,
-     conclusion:req.body.conclusion,
-     status:1,
-     image: {
-       data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)),
-       contentType: 'image/png'
-     }
-   }
-   project_db.create(obj, (err, item) => {
-     if (err) {
-       console.log(err);
-     }
-     else {
-       res.redirect('/adminaddproject');
-     }
-   });
+  const user_id = req.session.passport.user;
+  user_db.findById(user_id)
+  .then(result => {
+    if(result.role =='A')
+    {
+      var obj = {
+        title: req.body.title,
+        point1: req.body.point1,
+        point2: req.body.point2,
+        link1: req.body.link1,
+        link2:req.body.link2,
+        introduction:req.body.introduction,
+        working:req.body.working,
+        conclusion:req.body.conclusion,
+        status:1,
+        project_image: {
+          data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)),
+          contentType: 'image/png'
+        }
+      }
+      project_db.create(obj, (err, item) => {
+        if (err) {
+          console.log(err);
+        }
+        else {
+          res.redirect('/adminaddproject');
+        }
+      });
+    }
+    else
+    {
+      res.render('centraldashboard',{error:'unautherized'})
+    }
+  })
+  .catch(err=>console.log(err));
  })
 
 app.get('/adminaddblog',(req,res) =>{
+  const user_id = req.session.passport.user;
+  user_db.findById(user_id)
+  .then(result => {
+    if(result.role =='A')
+    {
+      res.render('adminaddblog')
+    }
+    else
+    {
+      res.render('centraldashboard',{error:'unautherized'})
+    }
+  })
+  .catch(err=>console.log(err));
   res.render('adminaddblog')
 })
 
 app.post('/adminaddblog',(req,res)=>{
-  var new_blog = {
-    title:req.body.title,
-    point1: req.body.point1,
-    point2: req.body.point2,
-    introduction:req.body.introduction,
-    matter:req.body.matter,
-    status:1
-  }
-  blog_db.create(new_blog, (err, item) => {
-		if (err) {
-			console.log(err);
-		}
-		else {
-			res.redirect('/adminaddblog');
-		}
-	});
+  const user_id = req.session.passport.user;
+  user_db.findById(user_id)
+  .then(result => {
+    if(result.role =='A')
+    {
+      var new_blog = {
+        title:req.body.title,
+        point1: req.body.point1,
+        point2: req.body.point2,
+        introduction:req.body.introduction,
+        matter:req.body.matter,
+        status:1
+      }
+      blog_db.create(new_blog, (err, item) => {
+        if (err) {
+          console.log(err);
+        }
+        else {
+          res.redirect('/adminaddblog');
+        }
+      });
+    }
+    else
+    {
+      res.render('centraldashboard',{error:'unautherized'})
+    }
+  })
+  .catch(err=>console.log(err));
 })
 
 
 app.get('/adminaddmember',(req,res) =>{
-  res.render('adminaddmember')
+  const user_id = req.session.passport.user;
+  user_db.findById(user_id)
+  .then(result => {
+    if(result.role =='A')
+    {
+      res.render('adminaddmember')
+    }
+    else
+    {
+      res.render('centraldashboard',{error:'unautherized'})
+    }
+  })
+  .catch(err=>console.log(err));
+  
 })
 
-
-
-app.get('/admineditproject',(req,res) =>{
-  res.render('admineditproject')
-})
-
-app.get('/admineditblog',(req,res) =>{
-  res.render('admineditblog')
-})
-
-app.get('/admineditmember',(req,res) =>{
-  res.render('admineditmember')
-})
-
-
-
-app.get('/adminreviewproject',(req,res) =>{
-  res.render('adminreviewproject')
-})
-
-app.get('/adminreviewblog',(req,res) =>{
-  res.render('adminreviewblog')
-})
-
-// Authentication
-app.get('/login',(req,res)=>{
-  const error = req.flash().error  || [];
-  res.render('login',{error})
-})
-
-app.post('/login',(req,res,next) => {
-
-    passport.authenticate('local',{
-
-      successRedirect:'dashboard',
-      failureRedirect:'login',
-      failureFlash: 'Invalid Username or password'
-    }) (req,res,next);
-})
-
-app.get('/register',(req,res)=>{
-    res.render('register',{error:''});
-})
-
-app.post('/register',(req,res)=>{
-        if(req.body.password1!=req.body.password2)
-        {
-            res.render('register',{error : 'Password did not match'});
-        }
-        else{
-      const newuser = new user_db( {name:req.body.name ,email:req.body.mail, password:req.body.password1});
+app.post('/adminaddmember',(req,res)=>{
+  const user_id = req.session.passport.user;
+  user_db.findById(user_id)
+  .then(result => {
+    if(result.role =='A')
+    {
+      const newuser = new user_db( {name:req.body.name ,role:"M", password:req.body.password});
       bcrypt.genSalt(10,(err,salt) =>
         bcrypt.hash(newuser.password,salt,(err,hash) =>
         {
@@ -250,21 +422,222 @@ app.post('/register',(req,res)=>{
           newuser.save()
           .then(user =>
             {
-              res.redirect('/login')
+              res.redirect('/admindashboard')
             })
           .catch(err => {
-            res.render('register',{error : 'Username Already Exists'});
-            //console.log(err);
+            console.log(err)
+            res.render('adminaddmember');
           });
         })
       )
     }
+    else
+    {
+      res.render('centraldashboard',{error:'unautherized'})
+    }
   })
+  .catch(err=>console.log(err));
+   
+})
+
+
+
+app.get('/admineditproject',(req,res) =>{
+  const user_id = req.session.passport.user;
+  user_db.findById(user_id)
+  .then(result => {
+    if(result.role =='A')
+    {
+      project_db.find().sort({createdAt:-1})
+      .then(result =>{
+        res.render('admineditprojects',{projects:result});
+      })
+      .catch(err => {
+        console.log(err);
+      })
+    }
+    else
+    {
+      res.render('centraldashboard',{error:'unautherized'})
+    }
+  })
+  .catch(err=>console.log(err));
+
+})
+
+app.delete('/admineditprojects',(req,res)=>{
+  const user_id = req.session.passport.user;
+  user_db.findById(user_id)
+  .then(result => {
+    if(result.role =='A')
+    {
+      res.render('membersdashboard',{user: result})
+    }
+    else
+    {
+      res.render('centraldashboard',{error:'unautherized'})
+    }
+  })
+  .catch(err=>console.log(err));
+
+})
+
+app.get('/admineditblog',(req,res) =>{
+  const user_id = req.session.passport.user;
+  user_db.findById(user_id)
+  .then(result => {
+    if(result.role =='a')
+    {
+      blog_db.find().sort({createdAt:-1})
+      .then(result =>{
+        res.render('admineditblogs',{blogs:result});
+      })
+      .catch(err => {
+        console.log(err);
+      })
+    }
+    else
+    {
+      res.render('centraldashboard',{error:'unautherized'})
+    }
+  })
+  .catch(err=>console.log(err));
+})
+
+app.get('/admineditmember',(req,res) =>{
+  const user_id = req.session.passport.user;
+  user_db.findById(user_id)
+  .then(result => {
+    if(result.role =='A')
+    {
+      user_db.find().sort({createdAt:-1})
+      .then(result =>{
+        res.render('admineditmembers',{members:result});
+      })
+      .catch(err => {
+        console.log(err);
+      })
+    }
+    else
+    {
+      res.render('centraldashboard',{error:'unautherized'})
+    }
+  })
+  .catch(err=>console.log(err));
+})
+
+
+
+app.get('/adminreviewproject',(req,res) =>{
+  const user_id = req.session.passport.user;
+  user_db.findById(user_id)
+  .then(result => {
+    if(result.role =='A')
+    {
+      project_db.find().sort({createdAt:-1})
+      .then(result =>{
+        res.render('adminreviewproject',{projects:result});
+      })
+      .catch(err => {
+        console.log(err);
+      })
+    }
+    else
+    {
+      res.render('centraldashboard',{error:'unautherized'})
+    }
+  })
+  .catch(err=>console.log(err));
+
+})
+
+app.get('/adminreviewblog',(req,res) =>{
+  const user_id = req.session.passport.user;
+  user_db.findById(user_id)
+  .then(result => {
+    if(result.role =='A')
+    {
+      blog_db.find().sort({createdAt:-1})
+      .then(result =>{
+        res.render('adminreviewblog',{blogs:result});
+      })
+      .catch(err => {
+        console.log(err);
+      })
+    }
+    else
+    {
+      res.render('centraldashboard',{error:'unautherized'})
+    }
+  })
+  .catch(err=>console.log(err));
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Authentication
+app.get('/login',(req,res)=>{
+  const error = req.flash().error  || [];
+  res.render('glogin',{error:error})
+})
+
+app.post('/login',(req,res,next) => {
+
+    passport.authenticate('local',{
+
+      successRedirect:'centraldashboard',
+      failureRedirect:'login',
+      failureFlash: 'Invalid Username or password'
+    }) (req,res,next);
+})
+
 
   app.get('/logout',(req,res) =>{
     req.logout();
     res.redirect('/');
   })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -288,6 +661,32 @@ app.use('/members',memberroutes);
 app.use((req,res) =>{
   res.status(404).render('404');
 })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*const express = require('express');
 const mongoose = require('mongoose');
