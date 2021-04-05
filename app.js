@@ -161,7 +161,7 @@ app.post('/memberaddproject',ensureAuthenticated, upload.single('image'), (req,r
             console.log(err) ;
           }
     
-          res.redirect('/membersadddashboard');
+          res.redirect('/memberdashboard');
         }
       });
     }
@@ -229,14 +229,7 @@ app.get('/membersupdate',ensureAuthenticated,(req,res) =>{
   .then(result => {
     if(result.role =='M')
     {
-      const user_id = req.session;
-      console.log(user_id)
-      user_db.findById(user_id)
-      .then(result => {
-        console.log(user_id,result)
-        res.render('memberupdate',{member:result});
-      })
-      .catch(err=>console.log(err));
+      res.render('memberupdate',{member:result});
     }
     else
     {
@@ -245,6 +238,44 @@ app.get('/membersupdate',ensureAuthenticated,(req,res) =>{
   })
   .catch(err=>console.log(err));
 
+})
+
+
+
+app.put('/memberupdate/:id',upload.single('image'),(req,res)=>{
+  console.log("Hi")
+  const member_id = req.params.id;
+  const user_id = req.session.passport.user;
+  if(user_id!=member_id)
+  {
+      res.render('/')
+  }
+  else
+  {
+    const newuser = new user_db( {name:req.body.name ,role:"M", password:req.body.password1,mail_id:req.body.mail,gitlink:req.body.gitlink,image: {
+      data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)),
+      contentType: 'image/png'
+    }});
+
+      bcrypt.genSalt(10,(err,salt) =>
+        bcrypt.hash(newuser.password,salt,(err,hash) =>
+        {
+          if(err) throw err;
+          newuser.password =hash;
+          const user_update = new user_db;
+          user_update = newuser;
+          user_update.findByIdAndUpdate(member_id)
+          .then(user =>
+            {
+              res.redirect('/memberdashboard')
+            })
+          .catch(err => {
+            console.log(err)
+            res.render('memberupdate');
+          });
+        })
+      )
+  }
 })
 
 
@@ -264,11 +295,10 @@ app.get('/membersupdate',ensureAuthenticated,(req,res) =>{
 
 
 
-
-
-
-
 //Admin Dashboard
+
+
+//Ading Admin
 app.get('/admindashboard',(req,res) =>{
   const user_id = req.session.passport.user;
   user_db.findById(user_id)
@@ -283,7 +313,6 @@ app.get('/admindashboard',(req,res) =>{
     }
   })
   .catch(err=>console.log(err));
-  
 })
 
 app.get('/adminaddproject',(req,res) =>{
@@ -341,6 +370,7 @@ app.post('/adminaddproject',upload.single('image'), (req,res) =>{
   .catch(err=>console.log(err));
  })
 
+
 app.get('/adminaddblog',(req,res) =>{
   const user_id = req.session.passport.user;
   user_db.findById(user_id)
@@ -357,6 +387,8 @@ app.get('/adminaddblog',(req,res) =>{
   .catch(err=>console.log(err));
   res.render('adminaddblog')
 })
+
+
 
 app.post('/adminaddblog',(req,res)=>{
   const user_id = req.session.passport.user;
@@ -388,6 +420,7 @@ app.post('/adminaddblog',(req,res)=>{
   })
   .catch(err=>console.log(err));
 })
+
 
 
 app.get('/adminaddmember',(req,res) =>{
@@ -442,7 +475,15 @@ app.post('/adminaddmember',(req,res)=>{
 
 
 
-app.get('/admineditproject',(req,res) =>{
+
+
+
+
+
+//Admin edit
+
+
+app.get('/admineditproject',ensureAuthenticated,(req,res) =>{
   const user_id = req.session.passport.user;
   user_db.findById(user_id)
   .then(result => {
@@ -465,13 +506,20 @@ app.get('/admineditproject',(req,res) =>{
 
 })
 
-app.delete('/admineditprojects',(req,res)=>{
+app.delete('/admineditproject/:id',ensureAuthenticated,(req,res)=>{
   const user_id = req.session.passport.user;
   user_db.findById(user_id)
   .then(result => {
     if(result.role =='A')
     {
-      res.render('membersdashboard',{user: result})
+      project_id = req.params.id;
+      project_db.findByIdAndDelete(project_id)
+      .then(result => {
+        res.json({ redirect: '/amindashboard' });
+      })
+      .catch(err => {
+        console.log(err);
+      });
     }
     else
     {
@@ -482,7 +530,9 @@ app.delete('/admineditprojects',(req,res)=>{
 
 })
 
-app.get('/admineditblog',(req,res) =>{
+
+
+app.get('/admineditblog',ensureAuthenticated,(req,res) =>{
   const user_id = req.session.passport.user;
   user_db.findById(user_id)
   .then(result => {
@@ -504,7 +554,34 @@ app.get('/admineditblog',(req,res) =>{
   .catch(err=>console.log(err));
 })
 
-app.get('/admineditmember',(req,res) =>{
+
+app.delete('/admineditblog/:id',ensureAuthenticated,(req,res)=>{
+  const user_id = req.session.passport.user;
+  user_db.findById(user_id)
+  .then(result => {
+    if(result.role =='A')
+    {
+      blog_id = req.params.id;
+      blog_db.findByIdAndDelete(blog_id)
+      .then(result => {
+        res.json({ redirect: '/amindashboard' });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    }
+    else
+    {
+      res.render('centraldashboard',{error:'unautherized'})
+    }
+  })
+  .catch(err=>console.log(err));
+
+})
+
+
+
+app.get('/admineditmember',ensureAuthenticated,(req,res) =>{
   const user_id = req.session.passport.user;
   user_db.findById(user_id)
   .then(result => {
@@ -526,9 +603,40 @@ app.get('/admineditmember',(req,res) =>{
   .catch(err=>console.log(err));
 })
 
+app.delete('/admineditmember/:id',ensureAuthenticated,(req,res)=>{
+  const user_id = req.session.passport.user;
+  user_db.findById(user_id)
+  .then(result => {
+    if(result.role =='A')
+    {
+      userdel_id = req.params.id;
+      user_db.findByIdAndDelete(userdel_id)
+      .then(result => {
+        res.json({ redirect: '/admindashboard' });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    }
+    else
+    {
+      res.render('centraldashboard',{error:'unautherized'})
+    }
+  })
+  .catch(err=>console.log(err));
+
+})
 
 
-app.get('/adminreviewproject',(req,res) =>{
+
+
+
+
+
+
+//review
+
+app.get('/adminreviewproject',ensureAuthenticated,(req,res) =>{
   const user_id = req.session.passport.user;
   user_db.findById(user_id)
   .then(result => {
@@ -549,6 +657,29 @@ app.get('/adminreviewproject',(req,res) =>{
   })
   .catch(err=>console.log(err));
 
+})
+
+app.get('/adminreviewprojectparticular/:id',ensureAuthenticated,(req,res)=>{
+  const user_id = req.session.passport.user;
+  user_db.findById(user_id)
+  .then(result => {
+    if(result.role =='A')
+    {
+      project_id=req.params.id;
+      project_db.findById(project_id)
+      .then(result =>{
+        res.render('adminreviewprojectparticular',{project:result});
+      })
+      .catch(err => {
+        console.log(err);
+      })
+    }
+    else
+    {
+      res.render('centraldashboard',{error:'unautherized'})
+    }
+  })
+  .catch(err=>console.log(err));
 })
 
 app.get('/adminreviewblog',(req,res) =>{

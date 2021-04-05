@@ -4,11 +4,11 @@
   <%- include('./partials/head') %>
 </head>
 <body>
-  <%- include('./partials/navbar1') %>
+  <%- include('./partials/navbar2') %>
 
   <div class="jumbotron jumbotron-fluid" style="background-image: url(background2.svg); background-repeat: no-repeat; background-position: center;" >
     <div class="container">
-      <div class="row" style="margin-top: 90px; margin-bottom: 200px;">
+      <div class="row" style="margin-top: 100px; margin-bottom: 50px;">
         <div class="col-lg-12">
           <h1 style="text-align: center; margin-top: 0px;  justify-content: center; font-weight: 800;">Welcome to our Projects!!</h1>
         </div> 
@@ -16,11 +16,11 @@
     </div>
   </div>
 
-    <div class="jumbotron" >
+    <div class="jumbotron" style="background-color: white;" >
       <% if (projects.length > 0) { %>
         <% projects.forEach(pp => { %>
           <% if(pp.status==1) {%>
-          <div class="jumbotron" style="background-color: #fff;">
+          <div class="jumbotron" style="background-color: rgba(255, 174, 0, 0.863);">
             <div class="">
               <div class="row">
                 <div class="col-lg-6 col-md-12 col-sm-12">
@@ -41,9 +41,10 @@
                   </ul>
                   <br>
                   <div  >
-                  <a href="<%=pp.link1%>"><button type="submit" class="btn btn-outline-dark" style="transition: 0.4s; margin-right:30px ; margin-left: 50px;" >View Demo</button></a>
-                  <a href="<%=pp.link2%>"><button type="submit" class="btn btn-outline-dark" style="transition: 0.4s; margin-right: 30px; margin-left: 50px;">View Code</button></a>
-                  <a href="/projects/<%=pp._id%>"><button type="submit" class="btn btn-outline-dark" style="transition: 0.4s; margin-right: 30px; margin-left: 50px;">Readmore</button></a>
+                  <a href="/admineditproject/<%=pp._id%>"><button type="submit" class="btn btn-outline-dark" style="transition: 0.4s; margin-right: 30px; margin-left: 50px;">Readmore</button></a>
+                  <a class="delete" data-doc="<%= pp._id %>">
+                    <img src="/trashcan.svg" alt="delete icon">
+                  </a>
                   </div>
                 </div>
               </div>
@@ -69,6 +70,18 @@
 
   <%- include('./partials/footer') %>
 
+  <script>
+    const trashcan = document.querySelector('a.delete');
+    trashcan.addEventListener('click', (e) => {
+      const endpoint = `/admineditproject/${trashcan.dataset.doc}`;
+      fetch(endpoint, {
+        method: 'DELETE',
+      })
+      .then(response => response.json())
+      .then(data => window.location.href = data.redirect)
+      .catch(err => console.log(err));
+    });
+  </script>
 
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>

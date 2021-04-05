@@ -8,7 +8,7 @@
 
   <div class="jumbotron jumbotron-fluid" style="background-image: url(background2.svg); background-repeat: no-repeat; background-position: center;" >
     <div class="container">
-      <div class="row" style="margin-top: 90px; margin-bottom: 200px;">
+      <div class="row" style="margin-top: 50px; margin-bottom: 100px;">
         <div class="col-lg-12">
           <h1 style="text-align: center; margin-top: 0px;  justify-content: center; font-weight: 800;">Our Team!!</h1>
         </div> 
@@ -16,22 +16,29 @@
     </div>
   </div>
 
-    <div class="jumbotron">
+    <div class="jumbotron" style="background-color: white;">
       <div class="row">
         <% if (members.length > 0) { %>
           <% members.forEach(pp => { %>
         <div class="col-lg-4 col-md-6 col-sm-12">
-          <div class="card" style="width: 18rem;">
-            <img class="card-img-top" src="cimg1.jpg" alt="Card image cap">
+          <div class="card" style="width: 18rem; background-color: rgba(255, 136, 0, 0.719);">
+            <% if(pp.user_image.contentType) { %> 
+              <%= pp.user_image %> 
+              <img class="card-img-top" src="data:image/<%=pp.user_image.contentType%>;base64,
+              <%=pp.user_image.data.toString('base64')%>" alt="Card image cap">
+             
+            <% }else {%>
+              <img class="card-img-top" src="nodata.svg" alt="Card image cap">
+              <% } %> 
             <div class="card-body">
-              <h5 class="card-title" style="color: crimson; text-align: center; text-transform: capitalize;" ><%=pp.memname%></h5>
+              <h5 class="card-title" style="color: crimson; text-align: center; text-transform: capitalize;" ><%=pp.name%></h5>
               <i class="fa fa-envelope" style="font-size:36px"></i>
-              <p><%=pp.git%></p>
-              <a href="<%=pp.git%>" style="text-decoration: none; color: black; justify-content: center;text-align: left; "><i class="fa fa-github" style="font-size:36px"></i></a>
+              <p><%=pp.mail%></p>
+              <a href="<%=pp.gitlink%>" style="text-decoration: none; color: black; justify-content: center;text-align: left; "><i class="fa fa-github" style="font-size:36px"></i></a>
               </div>              
             </div>
           </div>
-        </div>
+        
         <% }) %>
             <% } else { %>
               <p style="text-align: center; font-weight: 800; "><span style="text-align:center">There are no members to display at this Moment :)</span></p>
@@ -39,7 +46,7 @@
       </div>
     </div>
 
-
+  </div>
 
 
 
@@ -47,7 +54,19 @@
 
     <%- include('./partials/footer') %>
 
-
+    <script>
+      const trashcan = document.querySelector('a.delete');
+      trashcan.addEventListener('click', (e) => {
+        const endpoint = `/admineditproject/${trashcan.dataset.doc}`;
+        fetch(endpoint, {
+          method: 'DELETE',
+        })
+        .then(response => response.json())
+        .then(data => window.location.href = data.redirect)
+        .catch(err => console.log(err));
+      });
+    </script>
+    
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
