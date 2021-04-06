@@ -8,7 +8,7 @@
 
   <div class="jumbotron jumbotron-fluid" style="background-image: url(background2.svg); background-repeat: no-repeat; background-position: center;" >
     <div class="container">
-      <div class="row" style="margin-top: 90px; margin-bottom: 200px;">
+      <div class="row" style="margin-top: 100px; margin-bottom: 50px;">
         <div class="col-lg-12">
           <h1 style="text-align: center; margin-top: 0px;  justify-content: center; font-weight: 800;">Our Team!!</h1>
         </div> 
@@ -16,29 +16,35 @@
     </div>
   </div>
 
-    <div class="jumbotron">
+    <div class="jumbotron" style="background-color: white;">
       <div class="row">
         <% if (members.length > 0) { %>
           <% members.forEach(pp => { %>
-        <div class="col-lg-4 col-md-6 col-sm-12">
+        <div class="col-lg-3 col-md-6 col-sm-12">
           <div class="card" style="width: 18rem;">
-            <img class="card-img-top" src="cimg1.jpg" alt="Card image cap">
+            <% if(pp.user_image.contentType) { %> 
+              <%= pp.user_image %> 
+              <img class="card-img-top" src="data:image/<%=pp.user_image.contentType%>;base64,
+              <%=pp.user_image.data.toString('base64')%>" style="width: 100%;" alt="Card image cap">
+             
+            <% }else {%>
+              <img class="card-img-top" src="avatar.svg" style="width: 100%;" alt="Card image cap">
+              <% } %> 
             <div class="card-body">
-              <h5 class="card-title" style="color: crimson; text-align: center; text-transform: capitalize;" ><%=pp.memname%></h5>
-              <i class="fa fa-envelope" style="font-size:36px"></i>
-              <p><%=pp.git%></p>
-              <a href="<%=pp.git%>" style="text-decoration: none; color: black; justify-content: center;text-align: left; "><i class="fa fa-github" style="font-size:36px"></i></a>
+              <h5 class="card-title" style="color: rgb(255, 0, 51); font-weight: 800; text-align: center; text-transform: capitalize;" ><%=pp.name%></h5>
+              <a href="mailto:<%=pp.mail_id%> " style=" color: black;"><i class="fa fa-envelope" style="font-size:36px; margin-left: 50px;"><p></p></i></a>
+              <a href="<%=pp.gitlink %> " style=" color: black;"><i class="fa fa-github-square" style="font-size:36px;  margin-left: 50px;" aria-hidden="true"></i></a>
               </div>              
             </div>
           </div>
-        </div>
+        
         <% }) %>
             <% } else { %>
               <p style="text-align: center; font-weight: 800; "><span style="text-align:center">There are no members to display at this Moment :)</span></p>
           <% } %>
       </div>
     </div>
-
+  </div>
 
 
 

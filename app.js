@@ -77,11 +77,18 @@ const memberroutes = require('./routes/memberroutes.js');
 
 
 
+app.get('/logout',(req,res) =>{
+  console.log('logout')
+  req.logout();
+  res.redirect('/');
+})
+
 
 
 
 //Central dashboard
-app.get('/centraldashboard',(req,res)=>{
+app.get('/centraldashboard',ensureAuthenticated,(req,res)=>{
+  console.log('Central Dashboard');
   res.render('centraldashboard',{error:''});
 })
 
@@ -94,6 +101,7 @@ app.get('/centraldashboard',(req,res)=>{
 
 //Member Dashboard
 app.get('/memberdashboard',ensureAuthenticated,(req,res) =>{
+  console.log("Member dashboard");
   const user_id = req.session.passport.user;
   user_db.findById(user_id)
   .then(result => {
@@ -103,7 +111,8 @@ app.get('/memberdashboard',ensureAuthenticated,(req,res) =>{
     }
     else
     {
-      res.render('centraldashboard',{error:'unautherized'})
+      console.log("Member dashboard Un Authorized");
+      res.render('centraldashboard',{error:'Un Authorized'})
     }
   })
   .catch(err=>console.log(err));
@@ -119,7 +128,8 @@ app.get('/membersaddproject',ensureAuthenticated,(req,res) =>{
     }
     else
     {
-      res.render('centraldashboard',{error:'unautherized'})
+      console.log("Member Project Un Authorized");
+      res.render('centraldashboard',{error:'Un Authorized'})
     }
   })
   .catch(err=>console.log(err));
@@ -167,7 +177,8 @@ app.post('/memberaddproject',ensureAuthenticated, upload.single('image'), (req,r
     }
     else
     {
-      res.render('centraldashboard',{error:'unautherized'})
+      console.log("Member Add project Un Authorized");
+      res.render('centraldashboard',{error:'Un Authorized'})
     }
   })
   .catch(err=>console.log(err));
@@ -185,7 +196,8 @@ app.get('/membersaddblog',ensureAuthenticated,(req,res) =>{
     }
     else
     {
-      res.render('centraldashboard',{error:'unautherized'})
+      console.log("Member Blog Un Authorized");
+      res.render('centraldashboard',{error:'Un Authorized'})
     }
   })
   .catch(err=>console.log(err));
@@ -217,7 +229,8 @@ app.post('/memberaddblog',ensureAuthenticated,(req,res)=>{
     }
     else
     {
-      res.render('centraldashboard',{error:'unautherized'})
+      console.log("Member Add Blog Un Authorized");
+      res.render('centraldashboard',{error:'Un Authorized'})
     }
   })
   .catch(err=>console.log(err));
@@ -233,7 +246,8 @@ app.get('/membersupdate',ensureAuthenticated,(req,res) =>{
     }
     else
     {
-      res.render('centraldashboard',{error:'unautherized'})
+      console.log("Member Update Un Authorized");
+      res.render('centraldashboard',{error:'Un Authorized'})
     }
   })
   .catch(err=>console.log(err));
@@ -242,39 +256,71 @@ app.get('/membersupdate',ensureAuthenticated,(req,res) =>{
 
 
 
-app.put('/memberupdate/:id',upload.single('image'),(req,res)=>{
-  console.log("Hi")
+app.post('/memberupdate/:id',ensureAuthenticated, upload.single('image'),(req,res)=>{
   const member_id = req.params.id;
   const user_id = req.session.passport.user;
   if(user_id!=member_id)
   {
-      res.render('/')
+    console.log("Member Update Memberupdate Un Authorized");
+    res.render('centraldashboard',{error:'Un Authorized'})
   }
   else
   {
-    const newuser = new user_db( {name:req.body.name ,role:"M", password:req.body.password1,mail_id:req.body.mail,gitlink:req.body.gitlink,image: {
-      data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)),
-      contentType: 'image/png'
-    }});
-
-      bcrypt.genSalt(10,(err,salt) =>
-        bcrypt.hash(newuser.password,salt,(err,hash) =>
+    
+    user_db.findOne({_id:member_id},(err,object)=>{
+      if(err)
+      {
+        console.log(err);
+      }
+      else{
+        if(!object)
         {
-          if(err) throw err;
-          newuser.password =hash;
-          const user_update = new user_db;
-          user_update = newuser;
-          user_update.findByIdAndUpdate(member_id)
-          .then(user =>
+          res.status(404).send();
+        }
+        else{
+          console.log(req);
+          if(req.body.name)
+          {
+            object.name = req.body.name;
+          }
+
+          if(req.body.mail_id)
+          {
+            
+            object.mail_id = req.body.mail_id;
+          }
+
+          if(req.body.gitlink)
+          {
+            object.gitlink = req.body.gitlink;
+          }
+
+          if(req.body.image)
+          {
+            /*object.user_image ={
+              data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)),
+              contentType: 'image/png'
+            }*/
+          }
+          if(req.body.password1 && req.body.password2)
+          {
+            bcrypt.genSalt(10,(err,salt) =>
+            bcrypt.hash(password1,salt,(err,hash) =>
             {
-              res.redirect('/memberdashboard')
+              if(err) throw err;
+              object.password =hash;
+                
             })
-          .catch(err => {
-            console.log(err)
-            res.render('memberupdate');
-          });
-        })
-      )
+            )
+          }
+          object.save()
+          .then(result =>{
+            res.redirect('/logout');
+          }) 
+          .catch(err=>console.log(err));       
+        }
+      }
+    })
   }
 })
 
@@ -299,23 +345,23 @@ app.put('/memberupdate/:id',upload.single('image'),(req,res)=>{
 
 
 //Ading Admin
-app.get('/admindashboard',(req,res) =>{
+app.get('/admindashboard',ensureAuthenticated,(req,res) =>{
   const user_id = req.session.passport.user;
   user_db.findById(user_id)
   .then(result => {
     if(result.role =='A')
     {
-      res.render('admindashboard')
+      res.render('admindashboard',{error:''});
     }
     else
     {
-      res.render('centraldashboard',{error:'un-authorized'})
+      res.render('centraldashboard',{error:'Un Authorized'})
     }
   })
   .catch(err=>console.log(err));
 })
 
-app.get('/adminaddproject',(req,res) =>{
+app.get('/adminaddproject',ensureAuthenticated,(req,res) =>{
   const user_id = req.session.passport.user;
   user_db.findById(user_id)
   .then(result => {
@@ -325,14 +371,14 @@ app.get('/adminaddproject',(req,res) =>{
     }
     else
     {
-      res.render('centraldashboard',{error:'unautherized'})
+      res.render('centraldashboard',{error:'Un Authorized'})
     }
   })
   .catch(err=>console.log(err));
   
 })
 
-app.post('/adminaddproject',upload.single('image'), (req,res) =>{
+app.post('/adminaddproject',ensureAuthenticated, upload.single('image'), (req,res) =>{
   const user_id = req.session.passport.user;
   user_db.findById(user_id)
   .then(result => {
@@ -355,23 +401,24 @@ app.post('/adminaddproject',upload.single('image'), (req,res) =>{
       }
       project_db.create(obj, (err, item) => {
         if (err) {
+          res.render('admindashboard',{error:'Cannot add project'});
           console.log(err);
         }
         else {
-          res.redirect('/adminaddproject');
+           res.render('admindashboard',{error:''});
         }
       });
     }
     else
     {
-      res.render('centraldashboard',{error:'unautherized'})
+      res.render('centraldashboard',{error:'Un Authorized'})
     }
   })
   .catch(err=>console.log(err));
  })
 
 
-app.get('/adminaddblog',(req,res) =>{
+app.get('/adminaddblog',ensureAuthenticated,(req,res) =>{
   const user_id = req.session.passport.user;
   user_db.findById(user_id)
   .then(result => {
@@ -381,7 +428,7 @@ app.get('/adminaddblog',(req,res) =>{
     }
     else
     {
-      res.render('centraldashboard',{error:'unautherized'})
+      res.render('centraldashboard',{error:'Un Authorized'})
     }
   })
   .catch(err=>console.log(err));
@@ -390,7 +437,7 @@ app.get('/adminaddblog',(req,res) =>{
 
 
 
-app.post('/adminaddblog',(req,res)=>{
+app.post('/adminaddblog',ensureAuthenticated,(req,res)=>{
   const user_id = req.session.passport.user;
   user_db.findById(user_id)
   .then(result => {
@@ -406,16 +453,17 @@ app.post('/adminaddblog',(req,res)=>{
       }
       blog_db.create(new_blog, (err, item) => {
         if (err) {
+          res.render('admindashboard',{error:'cannot add blog'});
           console.log(err);
         }
         else {
-          res.redirect('/adminaddblog');
+          res.render('admindashboard',{error:''});
         }
       });
     }
     else
     {
-      res.render('centraldashboard',{error:'unautherized'})
+      res.render('centraldashboard',{error:'Un Authorized'})
     }
   })
   .catch(err=>console.log(err));
@@ -423,7 +471,7 @@ app.post('/adminaddblog',(req,res)=>{
 
 
 
-app.get('/adminaddmember',(req,res) =>{
+app.get('/adminaddmember',ensureAuthenticated,(req,res) =>{
   const user_id = req.session.passport.user;
   user_db.findById(user_id)
   .then(result => {
@@ -433,14 +481,14 @@ app.get('/adminaddmember',(req,res) =>{
     }
     else
     {
-      res.render('centraldashboard',{error:'unautherized'})
+      res.render('centraldashboard',{error:'Un Authorized'})
     }
   })
   .catch(err=>console.log(err));
   
 })
 
-app.post('/adminaddmember',(req,res)=>{
+app.post('/adminaddmember',ensureAuthenticated, upload.single('image'),(req,res)=>{
   const user_id = req.session.passport.user;
   user_db.findById(user_id)
   .then(result => {
@@ -455,18 +503,18 @@ app.post('/adminaddmember',(req,res)=>{
           newuser.save()
           .then(user =>
             {
-              res.redirect('/admindashboard')
+              res.render('admindashboard',{error:''});
             })
           .catch(err => {
             console.log(err)
-            res.render('adminaddmember');
+            res.render('admindashboard',{error:'cannot add member'});
           });
         })
       )
     }
     else
     {
-      res.render('centraldashboard',{error:'unautherized'})
+      res.render('centraldashboard',{error:'Un Authorized'})
     }
   })
   .catch(err=>console.log(err));
@@ -499,7 +547,7 @@ app.get('/admineditproject',ensureAuthenticated,(req,res) =>{
     }
     else
     {
-      res.render('centraldashboard',{error:'unautherized'})
+      res.render('centraldashboard',{error:'Un Authorized'})
     }
   })
   .catch(err=>console.log(err));
@@ -515,7 +563,7 @@ app.delete('/admineditproject/:id',ensureAuthenticated,(req,res)=>{
       project_id = req.params.id;
       project_db.findByIdAndDelete(project_id)
       .then(result => {
-        res.json({ redirect: '/amindashboard' });
+        res.json({ redirect: '/admindashboard' });
       })
       .catch(err => {
         console.log(err);
@@ -523,7 +571,7 @@ app.delete('/admineditproject/:id',ensureAuthenticated,(req,res)=>{
     }
     else
     {
-      res.render('centraldashboard',{error:'unautherized'})
+      res.render('centraldashboard',{error:'Un Authorized'})
     }
   })
   .catch(err=>console.log(err));
@@ -536,7 +584,7 @@ app.get('/admineditblog',ensureAuthenticated,(req,res) =>{
   const user_id = req.session.passport.user;
   user_db.findById(user_id)
   .then(result => {
-    if(result.role =='a')
+    if(result.role =='A')
     {
       blog_db.find().sort({createdAt:-1})
       .then(result =>{
@@ -548,7 +596,7 @@ app.get('/admineditblog',ensureAuthenticated,(req,res) =>{
     }
     else
     {
-      res.render('centraldashboard',{error:'unautherized'})
+      res.render('centraldashboard',{error:'Un Authorized'})
     }
   })
   .catch(err=>console.log(err));
@@ -564,7 +612,7 @@ app.delete('/admineditblog/:id',ensureAuthenticated,(req,res)=>{
       blog_id = req.params.id;
       blog_db.findByIdAndDelete(blog_id)
       .then(result => {
-        res.json({ redirect: '/amindashboard' });
+        res.json({ redirect: '/admindashboard' });
       })
       .catch(err => {
         console.log(err);
@@ -572,7 +620,7 @@ app.delete('/admineditblog/:id',ensureAuthenticated,(req,res)=>{
     }
     else
     {
-      res.render('centraldashboard',{error:'unautherized'})
+      res.render('centraldashboard',{error:'Un Authorized'})
     }
   })
   .catch(err=>console.log(err));
@@ -597,7 +645,7 @@ app.get('/admineditmember',ensureAuthenticated,(req,res) =>{
     }
     else
     {
-      res.render('centraldashboard',{error:'unautherized'})
+      res.render('centraldashboard',{error:'Un Authorized'})
     }
   })
   .catch(err=>console.log(err));
@@ -620,7 +668,7 @@ app.delete('/admineditmember/:id',ensureAuthenticated,(req,res)=>{
     }
     else
     {
-      res.render('centraldashboard',{error:'unautherized'})
+      res.render('centraldashboard',{error:'Un Authorized'})
     }
   })
   .catch(err=>console.log(err));
@@ -652,7 +700,7 @@ app.get('/adminreviewproject',ensureAuthenticated,(req,res) =>{
     }
     else
     {
-      res.render('centraldashboard',{error:'unautherized'})
+      res.render('centraldashboard',{error:'Un Authorized'})
     }
   })
   .catch(err=>console.log(err));
@@ -676,7 +724,7 @@ app.get('/adminreviewprojectparticular/:id',ensureAuthenticated,(req,res)=>{
     }
     else
     {
-      res.render('centraldashboard',{error:'unautherized'})
+      res.render('centraldashboard',{error:'Un Authorized'})
     }
   })
   .catch(err=>console.log(err));
@@ -698,7 +746,7 @@ app.get('/adminreviewblog',(req,res) =>{
     }
     else
     {
-      res.render('centraldashboard',{error:'unautherized'})
+      res.render('centraldashboard',{error:'Un Authorized'})
     }
   })
   .catch(err=>console.log(err));

@@ -40,10 +40,11 @@
 }
 
 .delete{
+  font-size: 20px;
     top: 0;
     right: 0;
-    border-radius: 100%;
-    padding: 8px;
+    border-radius: 120%;
+    padding: 12px;
   }
   .delete:hover{
     cursor: pointer;
