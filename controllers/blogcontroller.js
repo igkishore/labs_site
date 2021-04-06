@@ -11,13 +11,12 @@ const blogs_get = (req,res) =>{
     })
 }
 const blogs_get_details = (req,res) =>{
-    blog_db.find().sort({createdAt:-1})
-    .then(result =>{
-      res.render('gblogdetails',{blog:result});
-    })
-    .catch(err => {
-      console.log(err);
-    })
+  const blog_id = req.params.id;
+  blog_db.findById(blog_id)
+  .then(result => {
+    res.render('gblogdetails',{blog:result});
+  })
+  .catch(err=>console.log(err));
 }
 
 module.exports = {

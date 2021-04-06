@@ -151,38 +151,28 @@ app.post('/memberaddproject',ensureAuthenticated, upload.single('image'), (req,r
         introduction:req.body.introduction,
         working:req.body.working,
         conclusion:req.body.conclusion,
-        status:0,
-        image: {
+        status:1,
+        project_image: {
           data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)),
           contentType: 'image/png'
         }
       }
       project_db.create(obj, (err, item) => {
-        const file_path = 'uploads/'+image_file_name;
         if (err) {
+          res.render('admindashboard',{error:'Cannot add project'});
           console.log(err);
         }
         else {
-    
-          try{
-            fs.unlinkSync(file_path);
-          }
-          catch(err){
-            console.log(err) ;
-          }
-    
-          res.redirect('/memberdashboard');
+           res.render('memberdashboard',{error:''});
         }
       });
     }
     else
     {
-      console.log("Member Add project Un Authorized");
       res.render('centraldashboard',{error:'Un Authorized'})
     }
   })
   .catch(err=>console.log(err));
- 
 })
 
 
