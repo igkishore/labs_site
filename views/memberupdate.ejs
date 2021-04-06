@@ -13,10 +13,11 @@
     </div>
   </div>
 
-    <% if(member.user_image.contentType) {%>
-    <img src="data:image/<%=member.user_image.contentType%>;base64,
-    <%=member.user_image.data.toString('base64')%>" style="width: 90%; height: auto;" > 
-<% } %> 
+  <% if(member.user_image) { %> 
+    <img class="card-img-top" src="<%=member.user_image%>" style="width: 10%;" alt="Card image cap">
+  <% }else {%>
+    <img class="card-img-top" src="avatar.svg" style="width: 30%; justify-content: center;" alt="Card image cap">
+    <% } %>  
     <div class="jumbotron" style="background-color: white;">
         <div class="container">
             <form action="/memberupdate/<%=member.id %>" method="POST" >
@@ -43,16 +44,13 @@
             </div>
 
             <div class="form-group">
-              <label for="image">Uplaod Your Pic</label>
-              <input type="file" class="form-control" name="image" placeholder="Upload Your Pic"   >
+              <label for="user_image">Uplaod Your Pic</label>
+              <input type="url" class="form-control" name="user_image" placeholder="Give the Link for Pic"   >
             </div>
 
             <div class="form-group" style="text-align: center;">
                 <button type="submit" class="btn btn-outline-dark">Submit</button>
             </div>
-            <a class="delete" data-doc="<%= member._id %>">
-              <img src="/trashcan.svg" alt="delete icon">
-            </a>
           </form>
         </div>
     </div>

@@ -22,11 +22,8 @@
           <% members.forEach(pp => { %>
         <div class="col-lg-3 col-md-6 col-sm-12">
           <div class="card" style="width: 18rem;">
-            <% if(pp.user_image.contentType) { %> 
-              <%= pp.user_image %> 
-              <img class="card-img-top" src="data:image/<%=pp.user_image.contentType%>;base64,
-              <%=pp.user_image.data.toString('base64')%>" style="width: 100%;" alt="Card image cap">
-             
+            <% if(pp.user_image) { %> 
+              <img class="card-img-top" src="<%=pp.user_image%>" style="width: 100%;" alt="Card image cap">
             <% }else {%>
               <img class="card-img-top" src="avatar.svg" style="width: 100%;" alt="Card image cap">
               <% } %> 

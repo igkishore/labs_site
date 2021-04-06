@@ -246,7 +246,7 @@ app.get('/membersupdate',ensureAuthenticated,(req,res) =>{
 
 
 
-app.post('/memberupdate/:id',ensureAuthenticated, upload.single('image'),(req,res)=>{
+app.post('/memberupdate/:id',ensureAuthenticated,(req,res)=>{
   const member_id = req.params.id;
   const user_id = req.session.passport.user;
   if(user_id!=member_id)
@@ -268,7 +268,6 @@ app.post('/memberupdate/:id',ensureAuthenticated, upload.single('image'),(req,re
           res.status(404).send();
         }
         else{
-          console.log(req);
           if(req.body.name)
           {
             object.name = req.body.name;
@@ -285,8 +284,9 @@ app.post('/memberupdate/:id',ensureAuthenticated, upload.single('image'),(req,re
             object.gitlink = req.body.gitlink;
           }
 
-          if(req.body.image)
+          if(req.body.user_image)
           {
+            object.user_image = req.body.user_image;
             /*object.user_image ={
               data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)),
               contentType: 'image/png'

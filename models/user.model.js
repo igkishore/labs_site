@@ -16,8 +16,7 @@ const userschema = new Schema({
   },
   user_image:
   {
-    data: Buffer,
-    contentType: String,
+    type:String,
   },
   role:
   {
