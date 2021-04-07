@@ -269,19 +269,27 @@ app.post('/memberupdate/:id',ensureAuthenticated,(req,res)=>{
           if(req.body.password1 && req.body.password2)
           {
             bcrypt.genSalt(10,(err,salt) =>
-            bcrypt.hash(password1,salt,(err,hash) =>
+            bcrypt.hash(req.body.password1,salt,(err,hash) =>
             {
               if(err) throw err;
               object.password =hash;
+              object.save()
+            .then(result =>{
+            res.redirect('/logout');
+            }) 
+            .catch(err=>console.log(err)); 
                 
             })
             )
+            console.log(object.password)
           }
-          object.save()
+          else{
+            object.save()
           .then(result =>{
             res.redirect('/logout');
           }) 
-          .catch(err=>console.log(err));       
+          .catch(err=>console.log(err)); 
+          }      
         }
       }
     })
