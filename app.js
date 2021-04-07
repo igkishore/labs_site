@@ -18,7 +18,7 @@ var app = express();
 const port = process.env.PORT || 3000 ;
 
 //Database
-const dburl = "mongodb+srv://gowtham:test1234@main.l0g6f.mongodb.net/labsite_db?retryWrites=true&w=majority";
+const dburl = process.env.DB_URL
 mongoose.connect(dburl,{useNewUrlParser:true,useUnifiedTopology:true , useCreateIndex:true})
 .then(res=> app.listen(port),console.log("Database  Connected !!!"))
 .catch(err=> console.log(err));
@@ -151,7 +151,7 @@ app.post('/memberaddproject',ensureAuthenticated, upload.single('image'), (req,r
         introduction:req.body.introduction,
         working:req.body.working,
         conclusion:req.body.conclusion,
-        status:1,
+        status:0,
         project_image: {
           data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)),
           contentType: 'image/png'
@@ -163,7 +163,7 @@ app.post('/memberaddproject',ensureAuthenticated, upload.single('image'), (req,r
           console.log(err);
         }
         else {
-           res.render('memberdashboard',{error:''});
+           res.redirect('memberdashboard');
         }
       });
     }
@@ -213,7 +213,7 @@ app.post('/memberaddblog',ensureAuthenticated,(req,res)=>{
           console.log(err);
         }
         else {
-          res.redirect('/membersaddblog');
+          res.redirect('/memberdashboard');
         }
       });
     }
@@ -672,6 +672,31 @@ app.delete('/admineditmember/:id',ensureAuthenticated,(req,res)=>{
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //review
 
 app.get('/adminreviewproject',ensureAuthenticated,(req,res) =>{
@@ -698,19 +723,58 @@ app.get('/adminreviewproject',ensureAuthenticated,(req,res) =>{
 })
 
 app.get('/adminreviewprojectparticular/:id',ensureAuthenticated,(req,res)=>{
+  //console.log("hhhhhhhhhhhhhhhh")
   const user_id = req.session.passport.user;
   user_db.findById(user_id)
   .then(result => {
     if(result.role =='A')
     {
-      project_id=req.params.id;
-      project_db.findById(project_id)
-      .then(result =>{
-        res.render('adminreviewprojectparticular',{project:result});
+      const project_id = req.params.id;
+      project_db.findOne({_id:project_id},(err,object)=>{
+        if(err)
+        {
+        console.log(err);
+        }
+        else{
+          if(!object)
+          {
+          res.status(404).send();
+          }
+          else{
+            object.status = 1;
+            object.save()
+            .then(result =>{
+              res.redirect('/admindashboard');
+            }) 
+            .catch(err=>console.log(err));       
+          }
+      }
+    })
+  }
+    else
+    {
+      res.render('centraldashboard',{error:'Un Authorized'})
+    }
+  })
+  .catch(err=>console.log(err));
+
+})
+
+
+app.delete('/admindeleteprojectparticular/:id',ensureAuthenticated,(req,res)=>{
+  const user_id = req.session.passport.user;
+  user_db.findById(user_id)
+  .then(result => {
+    if(result.role =='A')
+    {
+      project_id = req.params.id;
+      project_db.findByIdAndDelete(project_id)
+      .then(result => {
+        res.json({ redirect: '/admindashboard' });
       })
       .catch(err => {
         console.log(err);
-      })
+      });
     }
     else
     {
@@ -718,9 +782,14 @@ app.get('/adminreviewprojectparticular/:id',ensureAuthenticated,(req,res)=>{
     }
   })
   .catch(err=>console.log(err));
+
 })
 
-app.get('/adminreviewblog',(req,res) =>{
+
+
+
+
+app.get('/adminreviewblog',ensureAuthenticated,(req,res) =>{
   const user_id = req.session.passport.user;
   user_db.findById(user_id)
   .then(result => {
@@ -743,8 +812,68 @@ app.get('/adminreviewblog',(req,res) =>{
 })
 
 
+app.delete('/admindeleteblogparticular/:id',ensureAuthenticated,(req,res)=>{
+  const user_id = req.session.passport.user;
+  user_db.findById(user_id)
+  .then(result => {
+    if(result.role =='A')
+    {
+      blog_id = req.params.id;
+      blog_db.findByIdAndDelete(blog_id)
+      .then(result => {
+        res.json({ redirect: '/adminreviewblog' });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    }
+    else
+    {
+      res.render('centraldashboard',{error:'Un Authorized'})
+    }
+  })
+  .catch(err=>console.log(err));
+
+})
 
 
+
+app.get('/adminreviewblogparticular/:id',ensureAuthenticated,(req,res)=>{
+  const user_id = req.session.passport.user;
+  user_db.findById(user_id)
+  .then(result => {
+    if(result.role =='A')
+    {
+      const blog_id = req.params.id;
+      blog_db.findOne({_id:blog_id},(err,object)=>{
+        if(err)
+        {
+        console.log(err);
+        }
+        else{
+          if(!object)
+          {
+          res.status(404).send();
+          }
+          else{
+            object.status = 1;
+            object.save()
+            .then(result =>{
+              res.redirect('/admindashboard');
+            }) 
+            .catch(err=>console.log(err));       
+          }
+      }
+    })
+  }
+    else
+    {
+      res.render('centraldashboard',{error:'Un Authorized'})
+    }
+  })
+  .catch(err=>console.log(err));
+
+})
 
 
 

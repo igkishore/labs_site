@@ -41,9 +41,13 @@
                   </ul>
                   <br>
                   <div  >
-                  <a href="<%=pp.link1%>"><button type="submit" class="btn btn-outline-dark" style="transition: 0.4s; margin-right:30px ; margin-left: 50px;" >View Demo</button></a>
-                  <a href="<%=pp.link2%>"><button type="submit" class="btn btn-outline-dark" style="transition: 0.4s; margin-right: 30px; margin-left: 50px;">View Code</button></a>
+                  
                   <a href="/projects/<%=pp._id%>"><button type="submit" class="btn btn-outline-dark" style="transition: 0.4s; margin-right: 30px; margin-left: 50px;">Readmore</button></a>
+                  <a class="delete" data-doc="<%= pp._id %>">
+                    <img src="/trashcan.svg" style="font-size: 36px;" alt="delete icon">
+                  </a>
+                  <a href="adminreviewprojectparticular/<%=pp._id%>"><button type="submit" class="btn btn-outline-dark" style="transition: 0.4s; margin-right: 30px; margin-left: 50px;">OK</button></a>
+                  
                   </div>
                 </div>
               </div>
@@ -69,7 +73,32 @@
 
   <%- include('./partials/footer') %>
 
+  <script>
+    const trashcan = document.querySelector('a.delete');
+    trashcan.addEventListener('click', (e) => {
+      const endpoint = `/admindeleteprojectparticular/${trashcan.dataset.doc}`;
+      fetch(endpoint, {
+        method: 'DELETE',
+      })
+      .then(response => response.json())
+      .then(data => window.location.href = data.redirect)
+      .catch(err => console.log(err));
+    });
+    </script>
 
+
+<script>
+  const trashcan = document.querySelector('a.post');
+  trashcan.addEventListener('click', (e) => {
+    const endpoint = `/adminreviewprojectparticular/${trashcan.dataset.doc}`;
+    fetch(endpoint, {
+      method: 'POST',
+    })
+    .then(response => response.json())
+    .then(data => window.location.href = data.redirect)
+    .catch(err => console.log(err));
+  });
+  </script>
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>

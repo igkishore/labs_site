@@ -25,7 +25,7 @@
 
           <% blogs.forEach(pp => { %>
             <br>
-            <% if(pp.status == 1) {%>
+            <% if(pp.status == 0) {%>
             <div class="col-lg-6 col-md-12 col-sm-12">
             <a href="/blogs/<%=pp._id%>"  style="text-decoration: none;">
             
@@ -34,9 +34,13 @@
                 <h1 style="font-weight: 600; text-decoration: none; text-transform: capitalize; text-align: center; font-weight: 800; color: rgb(253, 253, 253);" ><%=pp.title%></h1>
                 <p class="lead" style="color:rgb(255, 255, 255); font-weight: 400; text-transform: capitalize;">-  <%=pp.point1%></p>
                 <p class="lead" style="color:rgb(255, 255, 255); font-weight: 400; text-transform: capitalize;">-  <%=pp.point2%></p>
+                <a class="delete" data-doc="<%= pp._id %>">
+                  <img src="/trashcan.svg" style="font-size: 36px;" alt="delete icon">
+                </a>
+                <a href="adminreviewblogparticular/<%=pp._id%>"><button type="submit" class="btn btn-outline-dark" style="transition: 0.4s; margin-right: 30px; margin-left: 50px;">OK</button></a>
               </div>
             </div>
-
+            
           </a>
           </div><%}%>
                 <% }) %>
@@ -53,7 +57,18 @@
 
 
     <%- include('./partials/footer') %>
-
+    <script>
+      const trashcan = document.querySelector('a.delete');
+      trashcan.addEventListener('click', (e) => {
+        const endpoint = `/admindeleteblogparticular/${trashcan.dataset.doc}`;
+        fetch(endpoint, {
+          method: 'DELETE',
+        })
+        .then(response => response.json())
+        .then(data => window.location.href = data.redirect)
+        .catch(err => console.log(err));
+      });
+      </script>
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
