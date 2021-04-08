@@ -63,7 +63,7 @@
 
 ## Website
 
-- <a href="https://notesapppp.herokuapp.com/">Notes App</a>
+- <a href="https://datapiratesapp.herokuapp.com/">Lab site</a>
 
 ## Licence
 - ***GNU GENERAL PUBLIC LICENSE***
