@@ -14,10 +14,11 @@
 7. LICENSE
 
 ## About
-- Preparing for exam or any practical exams need a perfect book , but books can't help us to revice the topics .
-- So here comes a solution which is a **Notes** .
-- But this notes can be shared to our friends and near persons, but what if theres is a site that can store notes and help the future juniors to prepare for there exams.
-- That is the motivation for  **Note's App** a notes sharing app.
+- Every Organization needs online presence to grow these days . 
+- This can be a official website for their organization. 
+- Based on this I have developed a site for the Student Clubs , Research labs to showcase their work .
+- This website have many features like Personalized dashboards for members and heads of the organization. 
+- And have used Bootstrap for making awesome UI.
 
 
 ## Tech Slack
@@ -52,10 +53,8 @@
 
 
 ## Future work
-- **Search bar** has to be implemented for effective searching of notes.
-- **Admin dashboard** has to be created for data monitering and spam detection.
-- **Recommendation** system has to be implemented for explore notes section.
-- **UI** can be developed for good user experience and iteraction
+- Fexible on site Text editer can be made available for best editing.
+- UI of the cards can be developed more for best user experience.
 
 ## Contributions
 - All contributions and suggestions are welcome .
