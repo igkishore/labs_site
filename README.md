@@ -1,7 +1,7 @@
 # Labsite
 
 <p align="center">
-    <img src="./public/1.png" alt="OCR" width="550"  height="250">
+    <img src="./public/11.png" alt="OCR" width="550"  height="250">
 </p>
 
 ## Contents
@@ -47,7 +47,7 @@
     <img src="./public/5.png" alt="OCR" width="550"  height="250">
 </p>
 <p align="center">
-    <img src="./public/6.png" alt="OCR" width="550"  height="250">
+    <img src="./public/1.png" alt="OCR" width="550"  height="250">
 </p>
 
 
